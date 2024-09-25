@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purple Land</title>
+</head>
+<body>
+
+    <style>
+        :root{
+            --default-purple: rgb(190, 122, 255)
+        }
+
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgb(206, 162, 255);
+        }
+
+        #welcome-text{
+            font-size: 20pt;
+            color: white;
+        }
+
+        #enter-btn{
+            width: 200px;
+            height: 50px;
+            padding: 0px 10px 0px 10px;
+            border-radius: 10px;
+            border: none;
+            background-color: rgb(145, 3, 228);
+            font-size: 20px;
+            color: white;
+            transition: transform 0.01s ease;
+        }
+
+
+        #enter-btn a{
+            color: white;
+            text-decoration: none;
+        }
+
+
+        #enter-btn:active{
+            transform: scale(0.9);
+        }
+    </style>
+
+    <!-- Exibir o formulário se o usuário não existir -->
+   
+
+    <!-- Se o usuário já existir, exibir mensagem -->
+    <p id="welcome-text">Bem-vindo de volta! Você já está registrado.</p>
+
+    <form method="POST" action="">
+        <button type="submit" id="enter-btn"><a href="../forum/home/home.html">Entrar na Purple Land</a></button>
+    </form>
+
+
+</body>
+</html>
