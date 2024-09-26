@@ -1,5 +1,5 @@
 :root{
-    --default-purple: rgb(190, 122, 255);
+    --default-purple: rgb(206, 162, 255);
 }
 
 
@@ -14,3 +14,4 @@
 body{
     background-color: var(--default-purple)
 }
+

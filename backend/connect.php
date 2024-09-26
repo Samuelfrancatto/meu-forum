@@ -18,6 +18,3 @@ try {
     exit; // Encerra o script se a conexão falhar
 }
 ?>
-
-
-
