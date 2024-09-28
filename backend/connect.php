@@ -11,8 +11,6 @@ try {
     
     // Configurar o modo de erro do PDO para exceções
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    echo "Conexão estabelecida com sucesso!";
 } catch (PDOException $e) {
     echo "Erro de conexão: " . $e->getMessage();
     exit; // Encerra o script se a conexão falhar

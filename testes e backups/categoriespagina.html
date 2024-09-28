@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        #categories-container{
+            width: 300px;
+            height: 300px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="categories-container">
+        <ul id="category-list">
+
+        </ul>
+    </div>
+
+    <script>
+
+        function fetchCategories(){
+            fetch('../backend/categories-content.php')
+                .then(response => {
+                    console.log('Resposta completa: ', response);
+                    if (!response.ok){
+                        throw new Error('Erro na requisição')
+                    }
+
+                    return response.text()
+                })
+
+                .then(text => {
+        console.log('Resposta em texto: ', text); // Log da resposta em texto
+        return JSON.parse(text);  // Fazendo a conversão para JSON manualmente
+    })
+
+                .then(data => {
+                    console.log(data);
+                    displayCategories(data)
+                })
+                .catch(error => {
+                    console.error("Erro ao buscar os dados: ", error)
+                })
+        }
+
+        function displayCategories(categories){
+            const categoryList = document.getElementById('category-list')
+
+            categories.forEach(category => {
+                let listItem = document.createElement('li')
+                listItem.textContent = category.category_name
+                categoryList.appendChild(listItem)
+            })
+        }
+
+        fetchCategories()
+
+    </script>
+    
+</body>
+</html>
