@@ -12,6 +12,35 @@
 
 
 body{
+    margin: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
     background-color: var(--default-purple)
+}
+
+#menu ul{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.menu-item{
+    list-style: none;
+}
+
+
+.menu-item a{
+    color: rgb(255, 255, 255);
+}
+
+.menu-item a:hover{
+    color: rgb(0, 255, 0);
+}
+
+.menu-item a:active{
+    color: blueviolet;
 }
 
