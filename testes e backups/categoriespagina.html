@@ -53,7 +53,13 @@
 
             categories.forEach(category => {
                 let listItem = document.createElement('li')
-                listItem.textContent = category.category_name
+                let link = document.createElement('a')
+
+                link.href = 'categoriespagina.html?category_id=' + category.id
+
+                link.textContent = category.category_name
+
+                categoryList.appendChild(link)
                 categoryList.appendChild(listItem)
             })
         }
