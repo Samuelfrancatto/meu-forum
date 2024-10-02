@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts</title>
+
+    <style>
+        #posts-container{
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="posts-container"></div>
+
+    <script>
+
+        /*function getCategoryIdFromURL(){
+            const params = new URLSearchParams(window.location.search)
+            return params.get('category_id')
+        }*/ 
+
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        
+
+        function fetchPosts(categoryId){
+            fetch(`../backend/get_posts.php?category_id=${categoryId}`)
+                .then(response =>{
+                    if(!response.ok){
+                        throw new Error("Erro na requisição")
+                    }
+                    return response.json()
+                }) 
+                .then(posts => {
+                    displayPosts(posts)
+                })
+                .catch(error => {
+                    console.error("Erro ao buscar os posts: ", error)
+                })
+        }
+
+        function displayPosts(posts){
+            const postsContainer = document.getElementById('posts-container')
+            postsContainer.innerHTML = ''
+
+            if (posts.length === 0){
+                postsContainer.innerHTML = "<p>Nenhum post encontrado.</p>"
+
+                return
+            }
+
+            posts.forEach(post => {
+                let postItem = document.createElement('div')
+                postItem.classList.add('post')
+
+                postItem.innerHTML = `
+                <h3>${post.title}</h3>
+                <p>${post.content}</p>
+                <p><em>Postado em: ${new Date(post.created_at).toLocaleDateString()}</em></p>
+                `
+
+                postsContainer.appendChild(postItem)
+            })
+        }
+
+        document.addEventListener('DOMContentLoaded', function(){
+            const categoryId = getUrlParameter('category_id')
+            if(categoryId){
+                fetchPosts(categoryId)
+            }
+        })
+
+    </script>
+    
+</body>
+</html>
