@@ -76,6 +76,8 @@
             const categoryId = getUrlParameter('category_id')
             if(categoryId){
                 fetchPosts(categoryId)
+
+                document.getElementById('category_id').value = categoryId
             }
         })
 
