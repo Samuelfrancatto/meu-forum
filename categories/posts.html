@@ -63,10 +63,10 @@
                 postItem.classList.add('post')
 
                 postItem.innerHTML = `
-                <h3>${post.title}</h3>
-                <p>${post.content}</p>
-                <p><em>Postado em: ${new Date(post.created_at).toLocaleDateString()}</em></p>
-                `
+            <h3 id="title">${post.title}</h3>
+            <p id="content">${post.content}</p>
+            <p id="created_at"><em>Postado em: ${new Date(post.created_at).toLocaleDateString()}</em></p>
+        `;
 
                 postsContainer.appendChild(postItem)
             })
