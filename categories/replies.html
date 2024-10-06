@@ -7,14 +7,90 @@
 
     <link rel="stylesheet" href="../styles/style.css">
 
+    <style>
+        #main-post {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+
 </head>
 <body>
 
+    <div id="create-thread-container">
+        <form action="../backend/create-thread.php" method="post" id="post-form">
+
+            <div id="title-container">
+                <label for="title">Title: </label>
+                <input type="text" name="title" id="title-input">
+            </div>
+
+            <div id="content-container">
+                <label for="content">Content:</label>
+                <textarea name="content" id="content-input"></textarea>
+            </div>
+
+            <div id="nsfw-container">
+                <label for="nsfw">Is this post NSFW?</label>
+                <input type="checkbox" name="nsfw" id="nsfw-checkbox">
+            </div>
+
+            <input type="submit" value="create thread" id="post-btn">
+
+        </form>
+
+        <button id="post-something">Post Something!</button>
+    </div>
+
+    <div id="main-post"></div>
+
     <script>
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
 
-    
+        document.addEventListener('DOMContentLoaded', function() {
+            const postId = getUrlParameter('post_id'); // Captura o post_id
+            console.log("Post ID capturado: ", postId); // Verifica se o post_id está correto
 
+            if (postId) {
+                fetchMainPost(postId); // Chama a função para buscar o post principal
+            }
+        });
+
+        function fetchMainPost(postId) {
+            fetch(`../backend/get_main_post.php?post_id=${postId}`) // Altere para o nome correto do seu arquivo PHP
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Erro na requisição");
+                    }
+                    return response.json();
+                })
+                .then(post => {
+                    displayMainPost(post);
+                })
+                .catch(error => {
+                    console.error("Erro ao buscar o post principal: ", error);
+                });
+        }
+
+        function displayMainPost(post) {
+            const mainPostContainer = document.getElementById('main-post');
+            if (post.error) {
+                mainPostContainer.innerHTML = `<p>${post.error}</p>`;
+                return;
+            }
+
+            mainPostContainer.innerHTML = `
+                <h2>${post.title}</h2>
+                <p>${post.content}</p>
+                <p><em>Postado em: ${new Date(post.created_at).toLocaleDateString()}</em></p>
+            `;
+        }
     </script>
-    
+
 </body>
 </html>
