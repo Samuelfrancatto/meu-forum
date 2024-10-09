@@ -12,13 +12,107 @@
             width: 100%;
             height: 100%;
         }
+
+        #create-thread-container{
+            margin-top: 100px;
+            align-self: center;
+
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+
+            
+
+
+        }
+
+        #post-something{
+            width: 120px;
+            height: 55px;
+
+            border-radius: 10px;
+            
+            font-weight: bold;
+
+            margin-top: 100px;
+        }
+
+        #create-thread-container form{
+            margin-top: 100px;
+            align-self: center;
+            display: flex;
+            flex-direction: column;
+
+            justify-content: center;
+
+            align-items: center;
+
+            gap: 20px;
+
+
+            background-color: rgb(252, 252, 172);
+
+            width: 300px;
+            height: 300px;
+
+            border: 1px solid black;
+
+            
+        }
+
+
+        #title-input{
+            width: 200px;
+            height: 30px;
+
+            padding: 10px;
+        }
+
+        #content-input{
+            width: 200px;
+            max-width: 500px;
+            height: 100px;
+
+            resize: none;
+
+            padding: 10px;
+            
+        }
+
+        #nsfw-checkbox{
+            width: 15px;
+            height: 15px;
+        } 
+
+        #title-container{
+            display: flex;
+            flex-direction: column;
+        }
+
+        #content-container{
+            display: flex;
+            flex-direction: column;
+        }
+
+        #nsfw-container{
+            display: flex;
+            justify-content: left;
+            gap: 10px;
+        }
+
+        #post-btn{
+            width: 200px;
+            height: 30px;
+        }
+
     </style>
 
 </head>
 <body>
 
     <div id="create-thread-container">
-        <form action="../backend/create-thread.php" method="post" id="post-form">
+        <form action="../backend/reply_to.php" method="POST" id="reply-form">
 
             <div id="title-container">
                 <label for="title">Title: </label>
@@ -35,61 +129,71 @@
                 <input type="checkbox" name="nsfw" id="nsfw-checkbox">
             </div>
 
-            <input type="submit" value="create thread" id="post-btn">
+            <input type="hidden" name="parent_id" id="parent_id">
+
+            <input type="hidden" name="category_id" value="">
+
+            <input type="submit" value="Reply" id="post-btn">
 
         </form>
 
-        <button id="post-something">Post Something!</button>
+        <button id="post-something">Reply</button>
     </div>
 
     <div id="main-post"></div>
 
     <script>
-        function getUrlParameter(name) {
-            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-            const results = regex.exec(location.search);
-            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-        }
+       function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    const results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+}
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const postId = getUrlParameter('post_id'); // Captura o post_id
-            console.log("Post ID capturado: ", postId); // Verifica se o post_id está correto
+document.addEventListener('DOMContentLoaded', function() {
+    const postId = getUrlParameter('post_id'); // Captura o post_id
+    const categoryId = getUrlParameter('category_id'); // Captura o category_id
+    console.log("Post ID capturado: ", postId); 
+    console.log("Category ID capturado: ", categoryId); // Verifica se o category_id está correto
 
-            if (postId) {
-                fetchMainPost(postId); // Chama a função para buscar o post principal
+    document.querySelector('input[name="parent_id"]').value = postId;
+    document.querySelector('input[name="category_id"]').value = categoryId;
+
+    if (postId && categoryId) {
+        fetchMainPost(postId, categoryId); // Usa ambos os IDs
+    }
+});
+
+function fetchMainPost(postId, categoryId) {
+    fetch(`../backend/get_main_post.php?post_id=${postId}&category_id=${categoryId}`) // Inclua o category_id na requisição
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Erro na requisição");
             }
+            return response.json();
+        })
+        .then(post => {
+            displayMainPost(post);
+        })
+        .catch(error => {
+            console.error("Erro ao buscar o post principal: ", error);
         });
+}
 
-        function fetchMainPost(postId) {
-            fetch(`../backend/get_main_post.php?post_id=${postId}`) // Altere para o nome correto do seu arquivo PHP
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Erro na requisição");
-                    }
-                    return response.json();
-                })
-                .then(post => {
-                    displayMainPost(post);
-                })
-                .catch(error => {
-                    console.error("Erro ao buscar o post principal: ", error);
-                });
-        }
+function displayMainPost(post) {
+    const mainPostContainer = document.getElementById('main-post');
+    if (post.error) {
+        mainPostContainer.innerHTML = `<p>${post.error}</p>`;
+        return;
+    }
 
-        function displayMainPost(post) {
-            const mainPostContainer = document.getElementById('main-post');
-            if (post.error) {
-                mainPostContainer.innerHTML = `<p>${post.error}</p>`;
-                return;
-            }
+    mainPostContainer.innerHTML = `
+        <h2>${post.title}</h2>
+        <p>${post.content}</p>
+        <p><em>Postado em: ${new Date(post.created_at).toLocaleDateString()}</em></p>
+    `;
+}
 
-            mainPostContainer.innerHTML = `
-                <h2>${post.title}</h2>
-                <p>${post.content}</p>
-                <p><em>Postado em: ${new Date(post.created_at).toLocaleDateString()}</em></p>
-            `;
-        }
     </script>
 
 </body>

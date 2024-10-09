@@ -63,12 +63,13 @@
                 postItem.classList.add('post')
 
                 postItem.innerHTML = `
-            <h3 id="title">
-                <a href="replies.html?thread_id=${post.id}">${post.title}</h3>
-            <p id="content">${post.content}</a>
-                </p>
-            <p id="created_at"><em>Postado em: ${new Date(post.created_at).toLocaleDateString()}</em></p>
-        `;
+    <h3 id="title">
+        <a href="replies.html?thread_id=${post.id}&category_id=${post.category_id}">${post.title}</a>
+    </h3>
+    <p id="content">${post.content}</p>
+    <p id="created_at"><em>Postado em: ${new Date(post.created_at).toLocaleDateString()}</em></p>
+`;
+
 
                 postsContainer.appendChild(postItem)
             })
