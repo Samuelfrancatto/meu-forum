@@ -5,23 +5,229 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Posts</title>
 
+    <link rel="stylesheet" href="../styles/style.css">
+
     <style>
+
+        *{
+            font-size: 13px;
+        }
+        
+        body{
+            align-items: start;
+        }
+        
         #posts-container{
-            width: 100%;
-            height: auto;
+
+            display: flex;
+            flex-direction: column;
+
+            padding-top: 100px;
+
+
+
+            gap: 30px;
+
+            margin: 0;
+
+            height: 100vh;
+
+
+
+
+            max-width: 100vw;
+            max-height: 100vh; 
+
+        }
+
+        .post{
+
+
+            min-width: 30vw;
+            width: auto;
+
+            margin-left: 10px;
+
+            font-family: Arial, Helvetica, sans-serif;
+
+
+            background-color: rgb(252, 252, 172);
+
+            border: 2px solid rgb(172, 172, 117);
+        }
+
+       #title{
+
+            padding: 5px;
+            background-color: #003366;
+
+            color: white;
+        }
+        
+
+        #content{
+            padding: 20px 10px ;
+        }
+
+        #date{
+
+            padding: 5px;
+            background-color: #add8e6;
+        }
+
+        #create-thread-container{
+            margin-top: 100px;
+            align-self: center;
+
+            display: flex;
+            flex-direction: column;
+
+            align-items: center;
+
+            
+
+
+        }
+
+        #post-something{
+            width: 120px;
+            height: 55px;
+
+            border-radius: 10px;
+            
+            font-weight: bold;
+
+            margin-top: 100px;
+        }
+
+        #create-thread-container form{
+            margin-top: 100px;
+            align-self: center;
+            display: none;
+            flex-direction: column;
+
+            justify-content: center;
+
+            align-items: center;
+
+            gap: 20px;
+
+
+            background-color: rgb(252, 252, 172);
+
+            width: 300px;
+            height: 300px;
+
+            border: 1px solid black;
+
+            
+        }
+
+        
+
+
+
+        #title-input{
+            width: 200px;
+            height: 30px;
+
+            padding: 10px;
+        }
+
+        #content-input{
+            width: 200px;
+            max-width: 500px;
+            height: 100px;
+
+            resize: none;
+
+            padding: 10px;
+            
+        }
+
+        #nsfw-checkbox{
+            width: 15px;
+            height: 15px;
+        } 
+
+        #title-container{
+            display: flex;
+            flex-direction: column;
+        }
+
+        #content-container{
+            display: flex;
+            flex-direction: column;
+        }
+
+        #nsfw-container{
+            display: flex;
+            justify-content: left;
+            gap: 10px;
+        }
+
+        #post-btn{
+            width: 200px;
+            height: 30px;
         }
     </style>
 </head>
 <body>
 
-    <div id="posts-container"></div>
+    <script type="text/javascript">
+	atOptions = {
+		'key' : '4eb0460d94c3151f97800bed4932f01d',
+		'format' : 'iframe',
+		'height' : 90,
+		'width' : 728,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.topcpmcreativeformat.com/4eb0460d94c3151f97800bed4932f01d/invoke.js"></script>
+
+
+    <div id="create-thread-container">
+        <form action="../backend/create-thread.php" method="post" id="post-form">
+
+            <div id="title-container">
+                <label for="title">Title: </label>
+                <input type="text" name="title" id="title-input">
+            </div>
+
+
+            <div id="content-container">
+                <label for="content">Content:</label>
+                <textarea name="content" id="content-input" ></textarea>
+            </div>
+
+            <div id="nsfw-container">
+                <label for="nsfw">Is this post NSFW?</label>
+                <input type="checkbox" name="nsfw" id="nsfw-checkbox">
+            </div>
+
+            <input type="submit" value="create thread" id="post-btn">
+
+            <input type="hidden" name="category_id" id="category_id">
+
+
+
+        </form>
+
+        <button id="post-something">Post Something!</button>
+
+    </div>
+
+    <div id="posts-container">
+
+            
+            <p class="post-date">
+                <em>Postado em: data</em>
+            </p>
+        </div>
+
+    </div>
 
     <script>
-
-        /*function getCategoryIdFromURL(){
-            const params = new URLSearchParams(window.location.search)
-            return params.get('category_id')
-        }*/ 
 
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -63,13 +269,13 @@
                 postItem.classList.add('post')
 
                 postItem.innerHTML = `
-    <h3 id="title">
-        <a href="replies.html?thread_id=${post.id}&category_id=${post.category_id}">${post.title}</a>
-    </h3>
-    <p id="content">${post.content}</p>
-    <p id="created_at"><em>Postado em: ${new Date(post.created_at).toLocaleDateString()}</em></p>
-`;
-
+            <h3 id="title">
+                <a href="replies.html?post_id=${post.id}&category_id=${post.category_id}">${post.title}</a>
+                </h3>
+            <p id="content">${post.content}
+                </p>
+            <p id="created_at"><em>Postado em: ${new Date(post.created_at).toLocaleDateString()}</em></p>
+        `;
 
                 postsContainer.appendChild(postItem)
             })
@@ -83,6 +289,26 @@
                 document.getElementById('category_id').value = categoryId
             }
         })
+
+
+        postForm = document.getElementById('post-form')
+        postSomething = document.getElementById('post-something')
+        isOpen = false
+
+        postSomething.addEventListener('click', function(){
+            if (isOpen == false){
+            postForm.style.display = 'flex'
+            isOpen = false
+
+            postSomething.style.display = 'none'
+        } else if(isOpen == true){
+            postForm.style.display = 'none'
+
+            isOpen = false
+        }
+        })
+
+        
 
     </script>
     
