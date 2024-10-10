@@ -40,7 +40,7 @@
 
         }
 
-        .post{
+        .post-item{
 
 
             min-width: 30vw;
@@ -272,9 +272,15 @@ function getUrlParameter(name) {
                 postItem.classList.add('post-item')
 
                 postItem.innerHTML = `
-                 <h3>${post.title}</h3>
-                    <p>${post.content}</p>
-                    <p><em>Postado em: ${new Date(post.created_at).toLocaleDateString()}</em></p>
+                 <div id="title">
+                <h3>${post.title}</h3>
+            </div>
+            <div id="content">
+                <p>${post.content}</p>
+            </div>
+            <div id="date">
+                <p><em>Postado em: ${new Date(post.created_at).toLocaleDateString()}</em></p>
+            </div>
                 `
 
                 postsContainer.appendChild(postItem)
@@ -282,6 +288,27 @@ function getUrlParameter(name) {
         }
 
         document.addEventListener('DOMContentLoaded', fetchPosts)
+
+      postForm = document.getElementById('post-form')
+
+      postSomething = document.getElementById('post-something')
+
+      let isOpen = false
+
+      postSomething.addEventListener('click', function(){
+        if(!isOpen){
+        postForm.style.display = 'flex'
+        isOpen = true
+
+        postSomething.style.display = 'none'
+      } else {
+        postForm.style.display = 'none'
+
+        isOpen = false
+      }
+      })
+
+      
 
     </script>
 
