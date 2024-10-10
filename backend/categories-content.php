@@ -1,16 +1,22 @@
-<?php 
+<?php
+include 'connect.php'; // Conexão com o banco de dados
 
-include "connect.php";
+// Consulta para obter categorias e tópicos
+try {
+    $query = "
+        SELECT c.*, t.name AS topic_name
+        FROM categories c
+        JOIN topics t ON c.topic_id = t.id
+        ORDER BY t.id, c.name"; // Ordena por tópico e nome da categoria
 
-// Definir o cabeçalho para JSON
-header("Content-Type: application/json");
+    $stmt = $db->prepare($query);
+    $stmt->execute();
 
-// Realizar a consulta
-$query = "SELECT * FROM categories";
-$stmt = $db->query($query);
-$categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Retornar o JSON sem mensagens adicionais
-echo json_encode($categories);
-
+    header('Content-Type: application/json');
+    echo json_encode($categories);
+} catch (PDOException $e) {
+    echo json_encode(['error' => 'Erro no banco de dados: ' . $e->getMessage()]);
+}
 ?>
