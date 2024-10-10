@@ -174,16 +174,10 @@
 </head>
 <body>
 
-    <script type="text/javascript">
-	atOptions = {
-		'key' : '4eb0460d94c3151f97800bed4932f01d',
-		'format' : 'iframe',
-		'height' : 90,
-		'width' : 728,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.topcpmcreativeformat.com/4eb0460d94c3151f97800bed4932f01d/invoke.js"></script>
+
+<script async="async" data-cfasync="false" src="//pl24656304.cpmrevenuegate.com/db6fdf80d52ad2d9fac2fd4dd16d06a1/invoke.js"></script>
+<div id="container-db6fdf80d52ad2d9fac2fd4dd16d06a1"></div>
+
 
 
     <div id="create-thread-container">
@@ -225,92 +219,74 @@
             </p>
         </div>
 
-    </div>
+    
+
+    
 
     <script>
 
-        function getUrlParameter(name) {
+function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
             const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
             const results = regex.exec(location.search);
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
 
-        
+        function fetchPosts(){
+            const categoryId = getUrlParameter('category_id')
 
-        function fetchPosts(categoryId){
+            if (!categoryId) {
+                console.error("ID da categoria não foi fornecido.");
+                return;
+            }
+
             fetch(`../backend/get_posts.php?category_id=${categoryId}`)
-                .then(response =>{
-                    if(!response.ok){
-                        throw new Error("Erro na requisição")
-                    }
-                    return response.json()
-                }) 
-                .then(posts => {
-                    displayPosts(posts)
-                })
-                .catch(error => {
-                    console.error("Erro ao buscar os posts: ", error)
-                })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar os posts.');
+                }
+
+                return response.json()
+            })
+            .then(posts => {
+                displayPosts(posts)
+            })
+            .catch(error => {
+                console.error("Erro ao buscar os posts: ", error);
+            })
         }
 
         function displayPosts(posts){
             const postsContainer = document.getElementById('posts-container')
+
             postsContainer.innerHTML = ''
 
-            if (posts.length === 0){
-                postsContainer.innerHTML = "<p>Nenhum post encontrado.</p>"
-
+            if(posts.length === 0){
+                postsContainer.innerHTML = '<p>Nenhum post encontrado para esta categoria.</p>';
                 return
             }
 
             posts.forEach(post => {
-                let postItem = document.createElement('div')
-                postItem.classList.add('post')
+                const postItem = document.createElement('div')
+
+                postItem.classList.add('post-item')
 
                 postItem.innerHTML = `
-            <h3 id="title">
-                <a href="replies.html?post_id=${post.id}&category_id=${post.category_id}">${post.title}</a>
-                </h3>
-            <p id="content">${post.content}
-                </p>
-            <p id="created_at"><em>Postado em: ${new Date(post.created_at).toLocaleDateString()}</em></p>
-        `;
+                 <h3>${post.title}</h3>
+                    <p>${post.content}</p>
+                    <p><em>Postado em: ${new Date(post.created_at).toLocaleDateString()}</em></p>
+                `
 
                 postsContainer.appendChild(postItem)
             })
         }
 
-        document.addEventListener('DOMContentLoaded', function(){
-            const categoryId = getUrlParameter('category_id')
-            if(categoryId){
-                fetchPosts(categoryId)
-
-                document.getElementById('category_id').value = categoryId
-            }
-        })
-
-
-        postForm = document.getElementById('post-form')
-        postSomething = document.getElementById('post-something')
-        isOpen = false
-
-        postSomething.addEventListener('click', function(){
-            if (isOpen == false){
-            postForm.style.display = 'flex'
-            isOpen = false
-
-            postSomething.style.display = 'none'
-        } else if(isOpen == true){
-            postForm.style.display = 'none'
-
-            isOpen = false
-        }
-        })
-
-        
+        document.addEventListener('DOMContentLoaded', fetchPosts)
 
     </script>
+
+
+
     
 </body>
 </html>

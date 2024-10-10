@@ -3,13 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Categories</title>
+
+    <link rel="stylesheet" href="../styles/style.css">
 
     <style>
+
+        body{
+            height: 100vh;
+
+            margin-top: 100px;
+        }
         #categories-container{
-            width: 300px;
-            height: 300px;
-            border: 1px solid black;
+            display: flex;
+
+            padding: 40px;
+
+            margin-top: 100px;
+
+            width: 85vw;
+            height: auto;
+            border: 1px solid #4B4B4B;
+
+            background-color: #FFEB84;
+
+            margin: 0;
+
+            max-width: 100vw;        /* Limita a largura máxima à largura da tela */
+            max-height: 100vh; 
+
+            
+
+        }
+
+        ul{
+            display: flex;
+
+            gap: 30px;
+        }
+
+        li{
+            list-style: none;
+        }
+
+        a{
+            color: #8C78FF;
+            font-weight: bold;
+        }
+
+        a:hover{
+            color: #D1A4FF;
+        }
+
+        a:visited{
+            color: #6E5CB8;
+        }
+
+
+
+        .topic-name-container{
+            background-color: #0097c9;
+
+            padding: 5px;
+        }
+
+        #category-list ul{
+            background-color: #d2f4ff;
         }
     </style>
 </head>
@@ -17,54 +76,82 @@
 
     <div id="categories-container">
         <ul id="category-list">
-
+            
         </ul>
     </div>
 
     <script>
 
-        function fetchCategories(){
-            fetch('../backend/categories-content.php')
-                .then(response => {
-                    console.log('Resposta completa: ', response);
-                    if (!response.ok){
-                        throw new Error('Erro na requisição')
-                    }
+      function fetchCategories() {
+    fetch('../backend/categories-content.php')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro na requisição');
+            }
+            return response.json(); // A resposta já deve ser um JSON
+        })
+        .then(categories => {
+            displayCategories(categories);
+        })
+        .catch(error => {
+            console.error("Erro ao buscar os dados: ", error);
+        });
+}
 
-                    return response.text()
-                })
+function displayCategories(categories) {
+    const categoryList = document.getElementById('category-list');
 
-                .then(text => {
-        console.log('Resposta em texto: ', text); // Log da resposta em texto
-        return JSON.parse(text);  // Fazendo a conversão para JSON manualmente
-    })
+    // Agrupando categorias por tópico
+    const groupedCategories = categories.reduce((acc, category) => {
+        const topicName = category.topic_name;
 
-                .then(data => {
-                    console.log(data);
-                    displayCategories(data)
-                })
-                .catch(error => {
-                    console.error("Erro ao buscar os dados: ", error)
-                })
+        if (!acc[topicName]) {
+            acc[topicName] = []; // Cria um array para o tópico se não existir
         }
 
-        function displayCategories(categories){
-            const categoryList = document.getElementById('category-list')
+        acc[topicName].push(category); // Adiciona a categoria ao tópico correspondente
+        return acc;
+    }, {});
 
-            categories.forEach(category => {
-                let listItem = document.createElement('li')
-                let link = document.createElement('a')
+    // Criando o HTML a partir do agrupamento
+    for (const [topic, cats] of Object.entries(groupedCategories)) {
+        const topicContainer = document.createElement('div'); // Cria uma div para o tópico
 
-                link.href = 'posts.html?category_id=' + category.id
+        // Criando uma div separada para o nome do tópico
+        const topicDiv = document.createElement('div');
+        topicDiv.className = 'topic-name-container'; // Classe para o contêiner do nome do tópico
 
-                link.textContent = category.category_name
+        const topicHeader = document.createElement('h2');
+        topicHeader.textContent = topic; // Nome do tópico
+        topicDiv.appendChild(topicHeader); // Adiciona o cabeçalho à div do tópico
 
-                categoryList.appendChild(link)
-                categoryList.appendChild(listItem)
-            })
-        }
+        topicContainer.appendChild(topicDiv); // Adiciona a div do tópico ao contêiner
 
-        fetchCategories()
+        const categoryUl = document.createElement('ul'); // Lista para categorias
+        cats.forEach(category => {
+            const listItem = document.createElement('li');
+            const link = document.createElement('a');
+
+            link.href = 'posts.html?category_id=' + category.id; 
+            link.textContent = category.category_name;
+
+            listItem.appendChild(link);
+            categoryUl.appendChild(listItem);
+        });
+
+        topicContainer.appendChild(categoryUl); // Adiciona a lista de categorias ao contêiner do tópico
+        categoryList.appendChild(topicContainer); // Adiciona o contêiner do tópico à lista principal
+    }
+}
+
+
+fetchCategories();
+
+window.addEventListener('beforeunload', function(event) {
+    event.preventDefault()
+})
+
+
 
     </script>
     
