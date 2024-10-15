@@ -5,6 +5,22 @@
 
 include "connect.php";
 
+function verifyDoublePost($title, $content, $db){
+    $query = "SELECT content FROM posts WHERE title = :title ORDER BY created_at DESC LIMIT 1";
+
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':title', $title);
+    $stmt->execute();
+    $lastPost = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($lastPost && $lastPost['content'] === $content){
+        return false;
+    }
+
+    return true;
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
     $title = $_POST['title'] ?? '';
@@ -21,7 +37,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
     }
 
     try{
-        $query = "INSERT INTO posts (title, content, is_nsfw, created_at) VALUES (:title, :content, :is_nsfw, NOW())";
+
+        if (!verifyDoublePost($title, $content, $db)){
+            echo 'Post duplicado. Tente enviar um conteúdo diferente.';
+            exit;
+        }
+
+
+        $query = "INSERT INTO posts (title, content, is_nsfw, category_id, created_at) VALUES (:title, :content, :is_nsfw, :category_id, NOW())";
 
         $stmt = $db->prepare("$query");
 
@@ -46,5 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 } else{
     echo 'Método de envio inválido';
 }
+
+
+
 
 ?>
