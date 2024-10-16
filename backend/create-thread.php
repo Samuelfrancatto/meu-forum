@@ -20,6 +20,19 @@ function verifyDoublePost($title, $content, $db){
     return true;
 }
 
+function generateUserId($db){
+    do{
+        $user_id = uniqid();
+        $query = 'SELECT COUNT(*) FROM posts WHERE user_id = :user_id';
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        $exists = $stmt->fetchColumn();
+    } while($exists > 0);
+
+    return $user_id;
+}
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
@@ -43,8 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
             exit;
         }
 
+        $user_id = generateUserId($db);
 
-        $query = "INSERT INTO posts (title, content, is_nsfw, category_id, created_at) VALUES (:title, :content, :is_nsfw, :category_id, NOW())";
+
+        $query = "INSERT INTO posts (title, content, is_nsfw, category_id, user_id, created_at) VALUES (:title, :content, :is_nsfw, :category_id, :user_id, NOW())";
 
         $stmt = $db->prepare("$query");
 
@@ -54,10 +69,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
         $stmt->bindParam(':is_nsfw', $is_nsfw, PDO::PARAM_INT);
 
+        $stmt->bindParam(':user_id', $user_id);
+
         $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
             echo 'Post criado com sucesso!';
+
+
+            echo "<script>localStorage.setItem('user_id', '$user_id');</script>";
         } else {
             echo 'Erro ao criar o post.';
         }
