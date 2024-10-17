@@ -286,7 +286,7 @@ function getUrlParameter(name) {
 
                 postItem.innerHTML = `
                  <div id="title">
-                <h3>${post.title}</h3>
+                <h3><a href="../categories/replies.html?post_id=${post.id}&category_id=${post.category_id}">${post.title}</a></h3>
             </div>
             <div id="content">
                 <p>${post.content}</p>
